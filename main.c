@@ -76,7 +76,7 @@ const unsigned long i2c_func = I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
 
 static uint8_t i2c_state = STATUS_IDLE;
 
-uint8_t i2c_data[32] = {0};
+uint8_t i2c_data[33] = {0};
 
 bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb_control_request_t const* request) {
     if (request->bmRequestType_bit.type == TUSB_REQ_TYPE_VENDOR) {
