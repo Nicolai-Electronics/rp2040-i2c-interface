@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.12)
 message("Build type: \"${CMAKE_BUILD_TYPE}\"")
 
 # Project name
-set(NAME rp2040_firmware)
+set(NAME i2c_adapter)
 
 # Board type
 set(PICO_BOARD none)

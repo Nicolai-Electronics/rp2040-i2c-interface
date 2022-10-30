@@ -11,3 +11,5 @@ A simple demonstration showing how to control an OLED display (SSD1306) via I2C.
 
 
 ![photo](photo.jpg)
+
+[![Demonstration video](http://img.youtube.com/vi/PMtY5OU9V3Q/0.jpg)](http://www.youtube.com/watch?v=PMtY5OU9V3Q "Demonstration video")
