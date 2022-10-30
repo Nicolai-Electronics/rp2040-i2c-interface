@@ -23,7 +23,7 @@ debug:
 	$(MAKE) -C $(BUILD_DIR) --no-print-directory all
 
 flash:
-	picotool load $(BUILD_DIR)/rp2040_firmware.bin
+	picotool load $(BUILD_DIR)/i2c_adapter.bin
 	picotool reboot
 
 clean:
