@@ -76,7 +76,13 @@ const unsigned long i2c_func = I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
 
 static uint8_t i2c_state = STATUS_IDLE;
 
-uint8_t i2c_data[33] = {0};
+uint8_t i2c_data[1024] = {0};
+
+/*uint8_t buffer[256] = {0};
+void debug_print(const char* buffer) {
+    tud_cdc_n_write(0, buffer, strlen(buffer));
+    tud_cdc_n_write_flush(0);
+}*/
 
 bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb_control_request_t const* request) {
     if (request->bmRequestType_bit.type == TUSB_REQ_TYPE_VENDOR) {
@@ -108,6 +114,9 @@ bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb_control_requ
                 {
                     if (stage != CONTROL_STAGE_SETUP && stage != CONTROL_STAGE_DATA) return true;
                     bool stop = (request->bRequest & CMD_I2C_END);
+
+                    //sprintf(buffer, "%s i2c %s at 0x%02x, len = %d, stop = %d\r\n", (stage != CONTROL_STAGE_SETUP) ? "[D]" : "[S]", (request->wValue & I2C_M_RD)?"rd":"wr", request->wIndex, request->wLength, stop);
+                    //debug_print(buffer);
 
                     if (request->wLength > sizeof(i2c_data)) {
                         return false;  // Prevent buffer overflow in case host sends us an impossible request
