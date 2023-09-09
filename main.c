@@ -113,9 +113,9 @@ bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb_control_requ
             case CMD_I2C_IO + CMD_I2C_BEGIN + CMD_I2C_END:
                 {
                     if (stage != CONTROL_STAGE_SETUP && stage != CONTROL_STAGE_DATA) return true;
-                    bool stop = (request->bRequest & CMD_I2C_END);
+                    bool nostop = !(request->bRequest & CMD_I2C_END);
 
-                    //sprintf(buffer, "%s i2c %s at 0x%02x, len = %d, stop = %d\r\n", (stage != CONTROL_STAGE_SETUP) ? "[D]" : "[S]", (request->wValue & I2C_M_RD)?"rd":"wr", request->wIndex, request->wLength, stop);
+                    //sprintf(buffer, "%s i2c %s at 0x%02x, len = %d, nostop = %d\r\n", (stage != CONTROL_STAGE_SETUP) ? "[D]" : "[S]", (request->wValue & I2C_M_RD)?"rd":"wr", request->wIndex, request->wLength, nostop);
                     //debug_print(buffer);
 
                     if (request->wLength > sizeof(i2c_data)) {
@@ -125,7 +125,7 @@ bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb_control_requ
                     if (stage == CONTROL_STAGE_SETUP) {  // Before transfering data
                         if (request->wValue & I2C_M_RD) {
                             // Reading from I2C device
-                            int res = i2c_read_blocking(I2C_INST, request->wIndex, i2c_data, request->wLength, stop);
+                            int res = i2c_read_blocking(I2C_INST, request->wIndex, i2c_data, request->wLength, nostop);
                             if (res == PICO_ERROR_GENERIC) {
                                 i2c_state = STATUS_ADDRESS_NAK;
                             } else {
@@ -133,7 +133,7 @@ bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb_control_requ
                             }
                         } else if (request->wLength == 0) {  // Writing with length of 0, this is used for bus scanning, do dummy read
                             uint8_t dummy = 0x00;
-                            int     res   = i2c_read_blocking(I2C_INST, request->wIndex, (void*) &dummy, 1, stop);
+                            int     res   = i2c_read_blocking(I2C_INST, request->wIndex, (void*) &dummy, 1, nostop);
                             if (res == PICO_ERROR_GENERIC) {
                                 i2c_state = STATUS_ADDRESS_NAK;
                             } else {
@@ -145,7 +145,7 @@ bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb_control_requ
 
                     if (stage == CONTROL_STAGE_DATA) {        // After transfering data
                         if (!(request->wValue & I2C_M_RD)) {  // I2C write operation
-                            int res = i2c_write_blocking(I2C_INST, request->wIndex, i2c_data, request->wLength, stop);
+                            int res = i2c_write_blocking(I2C_INST, request->wIndex, i2c_data, request->wLength, nostop);
                             if (res == PICO_ERROR_GENERIC) {
                                 i2c_state = STATUS_ADDRESS_NAK;
                             } else {
